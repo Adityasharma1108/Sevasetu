@@ -1,4 +1,4 @@
 [build]
   base = "reactapp"
-  publish = "build"
+  publish = "reactapp/build"
   command = "CI=false npm run build"
