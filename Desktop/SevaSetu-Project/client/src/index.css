@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-white antialiased font-sans min-h-screen overflow-x-hidden;
+    background-image: radial-gradient(circle at top right, rgba(26, 42, 84, 1) 0%, rgba(10, 15, 28, 1) 40%);
+  }
+}
+
+.glass-panel {
+  @apply bg-surface/40 backdrop-blur-md border border-white/10 rounded-2xl shadow-neon-blue;
+}
