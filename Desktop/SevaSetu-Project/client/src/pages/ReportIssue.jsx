@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
-import { API_URL } from '../api'; // 🔥 API URL imported
+import { API_URL } from '../api';
 
 function ReportIssue() {
   const [formData, setFormData] = useState({
@@ -74,8 +74,8 @@ function ReportIssue() {
 
     try {
       const token = localStorage.getItem('token');
-      // 🔥 Updated to use API_URL
-      await axios.post(`${API_URL}/api/issues`, data, {
+      // 🔥 Corrected endpoint to /api/issues/report
+      await axios.post(`${API_URL}/api/issues/report`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
