@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { ShieldAlert, Mail, Lock, User, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import axios from 'axios'; // Backend se baat karne ke liye
+import axios from 'axios';
+import { API_URL } from '../api';
 
 function Register() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Page change karne ke liye
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,17 +22,14 @@ function Register() {
     setIsLoading(true);
 
     try {
-      // 1. Backend par data bhejna
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
+      const response = await axios.post(`${API_URL}/api/auth/register`, formData);
       
       console.log("Success:", response.data);
       alert("Account Created Successfully! Welcome to SevaSetu.");
       
-      // 2. Success ke baad user ko Login page par bhej dena
       navigate('/login');
       
     } catch (err) {
-      // 3. Agar koi error aaye (jaise email pehle se use hui ho)
       console.error("Error:", err);
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
@@ -60,7 +58,6 @@ function Register() {
             <p className="text-gray-400 text-sm">Join SevaSetu and improve your community</p>
           </div>
 
-          {/* Error Message UI */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/50 text-red-500 text-sm p-3 rounded-lg mb-6 text-center">
               {error}
