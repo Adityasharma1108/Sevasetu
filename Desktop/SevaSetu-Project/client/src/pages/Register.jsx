@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { ShieldAlert, Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { API_URL } from '../api';
 
 function Register() {
   const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false); // 🔥 Password toggle state
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -23,12 +24,8 @@ function Register() {
 
     try {
       const response = await axios.post(`${API_URL}/api/auth/register`, formData);
-      
-      console.log("Success:", response.data);
       alert("Account Created Successfully! Welcome to SevaSetu.");
-      
       navigate('/login');
-      
     } catch (err) {
       console.error("Error:", err);
       setError(err.response?.data?.message || "Something went wrong. Please try again.");
@@ -108,14 +105,22 @@ function Register() {
                   <Lock className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} // 🔥 Dynamic type
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-surface/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
+                  className="block w-full pl-10 pr-10 py-3 border border-white/10 rounded-xl bg-surface/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:border-accent/50 transition-all"
                   placeholder="••••••••"
                 />
+                {/* 🔥 Eye Icon Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
 

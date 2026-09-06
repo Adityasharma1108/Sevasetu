@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Mail, Lock, ArrowRight } from 'lucide-react';
+import { ShieldAlert, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // 🔥 Toast import kiya
+import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
+import { API_URL } from '../api';
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false); // 🔥 Password toggle state
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -20,21 +22,16 @@ function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', formData);
-      
-      console.log("Login Success:", response.data);
+      const response = await axios.post(`${API_URL}/api/auth/login`, formData);
       
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       
-      // 🔥 Toast success notification
       toast.success(`Welcome back, ${response.data.user.name || 'User'}! 🎉`);
-      
       navigate('/dashboard');
       
     } catch (err) {
       console.error("Login Error:", err);
-      // 🔥 Toast error notification
       toast.error(err.response?.data?.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
@@ -84,7 +81,6 @@ function Login() {
             <div>
               <div className="flex items-center justify-between mb-2">
                 <label className="block text-sm font-medium text-gray-300">Password</label>
-                {/* 🔥 Fixed class to className */}
                 <Link to="/forgot-password" className="text-xs text-primary hover:underline transition-colors">
                   Forgot Password?
                 </Link>
@@ -94,14 +90,22 @@ function Login() {
                   <Lock className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"} // 🔥 Dynamic type
                   name="password"
                   required
                   value={formData.password}
                   onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl bg-surface/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
+                  className="block w-full pl-10 pr-10 py-3 border border-white/10 rounded-xl bg-surface/50 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all"
                   placeholder="••••••••"
                 />
+                {/* 🔥 Eye Icon Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-white transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
             </div>
 
