@@ -4,16 +4,17 @@ import { ShieldAlert, CheckCircle, Clock, Trash2, MapPin, AlertTriangle, Loader2
 import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
+import { API_URL } from '../api'; // 🔥 API_URL imported for production
 
 function AdminDashboard() {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Saare issues fetch karna
+  // Saare issues fetch karna using API_URL
   const fetchAllIssues = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/issues', {
+      const response = await axios.get(`${API_URL}/api/issues`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setIssues(response.data);
@@ -29,15 +30,15 @@ function AdminDashboard() {
     fetchAllIssues();
   }, []);
 
-  // Issue status update karna (URL ab backend ke `/:id/status` se match karta hai)
+  // Issue status update karna
   const handleStatusUpdate = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/issues/${id}/status`, { status: newStatus }, {
+      await axios.put(`${API_URL}/api/issues/${id}/status`, { status: newStatus }, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       toast.success(`Issue status updated to ${newStatus}! ✅`);
-      fetchAllIssues(); // Refresh list
+      fetchAllIssues();
     } catch (err) {
       console.error("Error updating status:", err);
       toast.error("Failed to update issue status.");
@@ -50,7 +51,7 @@ function AdminDashboard() {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/issues/${id}`, {
+      await axios.delete(`${API_URL}/api/issues/${id}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       toast.success("Issue deleted successfully! 🗑️");
@@ -114,12 +115,10 @@ function AdminDashboard() {
                   <h3 className="text-lg font-bold text-white mb-2">{issue.title}</h3>
                   <p className="text-gray-400 text-sm mb-4 line-clamp-3">{issue.description}</p>
 
-                  {issue.latitude && issue.longitude && (
-                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
-                      <MapPin className="w-4 h-4 text-primary" />
-                      <span>{issue.latitude.toFixed(4)}, {issue.longitude.toFixed(4)}</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-4">
+                    <MapPin className="w-4 h-4 text-primary" />
+                    <span>{issue.location}</span>
+                  </div>
                 </div>
 
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-2">
@@ -134,6 +133,7 @@ function AdminDashboard() {
                   </select>
 
                   <button
+                    opacity="1"
                     onClick={() => handleDelete(issue._id)}
                     className="p-2 bg-red-500/20 text-red-400 hover:bg-red-500/30 rounded-xl transition-all cursor-pointer"
                     title="Delete Issue"
