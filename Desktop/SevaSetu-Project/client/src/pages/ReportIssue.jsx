@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
+import { API_URL } from '../api'; // 🔥 API URL imported
 
 function ReportIssue() {
   const [formData, setFormData] = useState({
@@ -27,7 +28,6 @@ function ReportIssue() {
     setImage(e.target.files[0]);
   };
 
-  // Browser Geolocation API se current location fetch karna
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation is not supported by your browser");
@@ -74,7 +74,8 @@ function ReportIssue() {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.post('http://localhost:5000/api/issues', data, {
+      // 🔥 Updated to use API_URL
+      await axios.post(`${API_URL}/api/issues`, data, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`
