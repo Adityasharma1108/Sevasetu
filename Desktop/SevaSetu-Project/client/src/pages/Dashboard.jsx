@@ -4,14 +4,14 @@ import { PlusCircle, Activity, CheckCircle2, Clock, MapPin, Navigation } from 'l
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import axios from 'axios';
+import { API_URL } from '../api'; // 🔥 API URL imported
 
 function Dashboard() {
   const [userCity, setUserCity] = useState("Detecting your location...");
   const [isLoadingLocation, setIsLoadingLocation] = useState(true);
-  const [issues, setIssues] = useState([]); // Database se aane wale asli issues yahan store honge
+  const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-    // 1. Location trace karne ka logic
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -42,11 +42,11 @@ function Dashboard() {
       setIsLoadingLocation(false);
     }
 
-    // 2. Backend (MongoDB) se Real Issues Fetch Karna
+    // 🔥 Backend (MongoDB) se Real Issues Fetch Karna using API_URL
     const fetchRealIssues = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/issues');
-        setIssues(response.data); // Asli data ko state mein save kar diya
+        const response = await axios.get(`${API_URL}/api/issues`);
+        setIssues(response.data);
       } catch (error) {
         console.error("Error fetching issues from backend:", error);
       }
@@ -55,7 +55,6 @@ function Dashboard() {
     fetchRealIssues();
   }, []);
 
-  // 3. Real Data ke hisaab se automatic Stats calculate karna
   const totalReports = issues.length;
   const resolvedCount = issues.filter(issue => issue.status === 'Resolved').length;
   const pendingCount = issues.filter(issue => issue.status !== 'Resolved').length;
@@ -160,7 +159,6 @@ function Dashboard() {
                           {issue.location}
                         </div>
                       </td>
-                      {/* Database Date ko format kiya */}
                       <td className="p-4 text-gray-400 text-sm">
                         {new Date(issue.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>
